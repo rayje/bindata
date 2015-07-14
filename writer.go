@@ -68,13 +68,15 @@ func writeBytes(w io.Writer, file *FileInfo) error {
 	}
 	defer r.Close()
 
-	if _, err := fmt.Fprintf(w, `var %s = "`, file.Name); err != nil {
+	if _, err := fmt.Fprintf(w, `var %s = []byte("`, file.Name); err != nil {
 		return err
 	}
 
 	gz := gzip.NewWriter(&Writer{Writer: w})
 	_, err = io.Copy(gz, r)
 	gz.Close()
+
+	fmt.Fprintf(w, `")`)
 
 	return err
 }
